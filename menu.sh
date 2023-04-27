@@ -11,19 +11,19 @@ oh_my_zsh_install() {
 }
 
 ss_install() {
-    curl -sSL 'https://raw.githubusercontent.com/xubiaolin/personal-tools/master/cross/ss-install.sh' | sh
+    curl -sSL 'https://raw.githubusercontent.com/xubiaolin/personal-tools/master/cross/ss-install.sh' -O && chmod +x ss-install.sh && ./ss-install.sh
 }
 
 bbr_install() {
-    wget -O tcpx.sh "https://github.com/ylx2016/Linux-NetSpeed/raw/master/tcpx.sh" && chmod +x tcpx.sh && ./tcpx.sh | sh
+    wget -O tcpx.sh "https://github.com/ylx2016/Linux-NetSpeed/raw/master/tcpx.sh" && chmod +x tcpx.sh && ./tcpx.sh
 }
 
 v2ray_install() {
-    curl -sSL 'https://raw.githubusercontent.com/mack-a/v2ray-agent/master/install.sh' | sh
+    curl -sSL 'https://raw.githubusercontent.com/mack-a/v2ray-agent/master/install.sh' -O 'v2ray-install.sh' && chmod +x v2ray-install.sh && ./v2ray-install.sh
 }
 
 bench_install() {
-    curl -sSL 'https://raw.githubusercontent.com/teddysun/across/master/bench.sh' | sh
+    curl -sSL 'https://raw.githubusercontent.com/teddysun/across/master/bench.sh' -O 'bench.sh' && chmod +x bench.sh && ./bench.sh
 }
 
 menu() {
