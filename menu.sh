@@ -26,6 +26,14 @@ bench_install() {
     curl -sSL 'https://raw.githubusercontent.com/teddysun/across/master/bench.sh' -O 'bench.sh' && chmod +x bench.sh && ./bench.sh
 }
 
+update_timezone(){
+    apt-get update
+    apt-get install -y tzdata
+    timedatectl set-timezone Asia/Shanghai
+    systemctl restart systemd-timedated
+    date
+}
+
 menu() {
     echo "1. docker install"
     echo "2. docker-compose install"
@@ -57,6 +65,9 @@ menu() {
         ;;
     7)
         bench_install
+        ;;
+    8)
+        update_timezone
         ;;
     0)
         exit 0
