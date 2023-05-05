@@ -36,6 +36,8 @@ update_timezone(){
 
 update_nodejs(){
     curl -sL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+    sudo apt update 
+    sudo apt-get install -y nodejs
 }
 
 install_yarn(){
@@ -43,6 +45,8 @@ install_yarn(){
     echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
     sudo apt-get update && sudo apt-get install yarn
 }
+
+
 
 menu() {
     echo "1. docker install"
