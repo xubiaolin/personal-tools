@@ -34,6 +34,16 @@ update_timezone(){
     date
 }
 
+update_nodejs(){
+    curl -sL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+}
+
+install_yarn(){
+    curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | sudo tee /usr/share/keyrings/yarnkey.gpg >/dev/null
+    echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+    sudo apt-get update && sudo apt-get install yarn
+}
+
 menu() {
     echo "1. docker install"
     echo "2. docker-compose install"
@@ -42,6 +52,10 @@ menu() {
     echo "5. bbr install"
     echo "6. v2ray install"
     echo "7. bench"
+    echo "8. update timezone"
+    echo "9. update nodejs"
+    echo "10. install yarn"
+
     echo "0. exit"
     read -p "Please input your choice: " choice
     case $choice in
@@ -68,6 +82,12 @@ menu() {
         ;;
     8)
         update_timezone
+        ;;
+    9)
+        update_nodejs
+        ;;
+    10)
+        install_yarn
         ;;
     0)
         exit 0
