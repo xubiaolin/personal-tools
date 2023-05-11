@@ -19,11 +19,11 @@ bbr_install() {
 }
 
 v2ray_install() {
-    curl -sSL 'https://raw.githubusercontent.com/mack-a/v2ray-agent/master/install.sh' -O 'v2ray-install.sh' && chmod +x v2ray-install.sh && ./v2ray-install.sh
+    curl -sSL 'https://raw.githubusercontent.com/mack-a/v2ray-agent/master/install.sh' -o 'v2ray-install.sh' && chmod +x v2ray-install.sh && ./v2ray-install.sh
 }
 
 bench_install() {
-    curl -sSL 'https://raw.githubusercontent.com/teddysun/across/master/bench.sh' -O 'bench.sh' && chmod +x bench.sh && ./bench.sh
+    curl -sSL 'https://raw.githubusercontent.com/teddysun/across/master/bench.sh' -o 'bench.sh' && chmod +x bench.sh && ./bench.sh
 }
 
 update_timezone(){
