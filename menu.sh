@@ -46,6 +46,18 @@ install_yarn(){
     sudo apt-get update && sudo apt-get install yarn
 }
 
+enable_swap(){
+    # 提示用户输入需要的swap大小，以MB为单位
+    read -p "Please input swap size(MB): " swapsize
+    dd if=/dev/zero of=/swap bs=1M count=$swapsize
+    mkswap /swap
+    # 启用交换文件
+    swapon /swap
+    # 设置开机自启动
+    echo "/swap swap swap defaults 0 0" >> /etc/fstab
+    # 交换文件设置完成，输出设置结果
+    echo "Swap file created successfully，swap size: ${swapsize}MB"
+}
 
 
 menu() {
@@ -59,6 +71,7 @@ menu() {
     echo "8. update timezone"
     echo "9. update nodejs"
     echo "10. install yarn"
+    echo "11. enable swap"
 
     echo "0. exit"
     read -p "Please input your choice: " choice
@@ -92,6 +105,9 @@ menu() {
         ;;
     10)
         install_yarn
+        ;;
+    11)
+        enable_swap
         ;;
     0)
         exit 0
