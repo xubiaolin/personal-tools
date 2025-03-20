@@ -1,11 +1,3 @@
-docker_install() {
-    curl -sSL 'https://get.docker.com' | sh
-}
-
-docker_compose_install() {
-    apt install docker-compose -y
-}
-
 oh_my_zsh_install() {
     sh -c "$(curl -fsSL https://ghproxy.markxu.online/https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 }
@@ -46,19 +38,64 @@ install_yarn(){
     sudo apt-get update && sudo apt-get install yarn
 }
 
-enable_swap(){
-    # 提示用户输入需要的swap大小，以MB为单位
-    read -p "Please input swap size(MB): " swapsize
-    dd if=/dev/zero of=/swap bs=1M count=$swapsize
-    mkswap /swap
-    # 启用交换文件
-    swapon /swap
-    # 设置开机自启动
-    echo "/swap swap swap defaults 0 0" >> /etc/fstab
-    # 交换文件设置完成，输出设置结果
-    echo "Swap file created successfully，swap size: ${swapsize}MB"
-}
+# 创建并配置swap的函数
+setup_swap() {
+    # 默认参数
+    local multiplier=${1:-2}    # swap大小倍数，默认2倍内存
+    local swappiness=${2:-70}   # swap使用偏好，默认70
+    local swapfile=${3:-"/swapfile"}  # swap文件路径，默认/swapfile
 
+    # 以root权限运行检查
+    if [ "$EUID" -ne 0 ]; then
+        echo "请以root权限运行此脚本"
+        return 1
+    fi
+
+    # 获取物理内存大小（单位：MB）
+    local MEM_SIZE=$(free -m | awk '/^Mem:/{print $2}')
+    local SWAP_SIZE=$((MEM_SIZE * multiplier))
+
+    echo "检测到物理内存: ${MEM_SIZE}MB"
+    echo "将创建 ${SWAP_SIZE}MB 的swap空间"
+
+    # 检查目标路径是否有足够空间
+    local available_space=$(df -m $(dirname "$swapfile") | awk 'NR==2 {print $4}')
+    if [ "$available_space" -lt "$SWAP_SIZE" ]; then
+        echo "错误：磁盘空间不足，需要 ${SWAP_SIZE}MB，可用 ${available_space}MB"
+        return 1
+    fi
+
+    # 创建swap文件
+    echo "正在创建swap文件: $swapfile..."
+    fallocate -l ${SWAP_SIZE}M "$swapfile"
+
+    # 设置正确的权限
+    chmod 600 "$swapfile"
+
+    # 设置swap区域
+    echo "设置swap区域..."
+    mkswap "$swapfile"
+
+    # 启用swap
+    echo "启用swap..."
+    swapon "$swapfile"
+
+    # 设置swappiness
+    echo "设置swappiness为${swappiness}..."
+    sysctl vm.swappiness="$swappiness"
+    echo "vm.swappiness=${swappiness}" >> /etc/sysctl.conf
+
+    # 添加到fstab
+    if ! grep -q "$swapfile" /etc/fstab; then
+        echo "$swapfile none swap sw 0 0" >> /etc/fstab
+    fi
+
+    # 显示结果
+    echo "当前内存和swap状态："
+    free -m
+
+    echo "swap设置完成！"
+}
 
 menu() {
     echo "1. docker install"
@@ -107,7 +144,7 @@ menu() {
         install_yarn
         ;;
     11)
-        enable_swap
+       setup_swap 
         ;;
     0)
         exit 0
